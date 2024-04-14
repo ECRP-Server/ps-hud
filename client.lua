@@ -1091,7 +1091,8 @@ CreateThread(function()
             if IsPedInAnyVehicle(ped, false) then
                 hasHarness()
                 local veh = GetEntityModel(GetVehiclePedIsIn(ped, false))
-                if seatbeltOn ~= true and IsThisModelACar(veh) then
+                local seatspeed = GetEntitySpeed(veh)
+                if seatbeltOn ~= true and IsThisModelACar(veh) and seatspeed >= 50 then
                     TriggerEvent("InteractSound_CL:PlayOnOne", "beltalarm", 0.6)
                 end
             end
@@ -1376,3 +1377,75 @@ CreateThread(function()
         end
     end
 end)
+-- hide hud 
+local function hideHud()
+    SendNUIMessage({
+        action = 'hudtick',
+        topic = 'display',
+        show = false,
+    })
+end
+
+-- show hud
+local function showHud()
+    SendNUIMessage({
+        action = 'hudtick',
+        topic = 'display',
+        show = true,
+    })
+end
+
+local function hideRadar()
+    DisplayRadar(false)
+end
+
+local function showRadar()
+    DisplayRadar(true)
+end
+
+-- hide vehicle hud
+local function hideVehicleHud()
+    SendNUIMessage({
+        action = 'car',
+        topic = 'display',
+        show = false,
+        seatbelt = false,
+    })
+end
+
+-- hide minimap
+local function hideMinimap()
+    SendNUIMessage({
+        action = 'minimap',
+        topic = 'display',
+        show = false,
+    })
+end
+
+
+hidehud = false
+
+RegisterCommand('-hidehud', function()
+    hidehud = true
+    Citizen.CreateThread(function()
+        while hidehud do
+            Wait(0)
+            hideHud()
+            hideVehicleHud()
+            hideMinimap()
+            hideRadar()
+        end
+    end)
+end, false)
+
+
+RegisterCommand('+showhud', function()
+    hidehud = false
+    Citizen.CreateThread(function()
+        while not hidehud do
+            Wait(0)
+            showHud()
+        end
+        showRadar()
+    end)
+end, false)
