@@ -171,10 +171,10 @@ UIConfig.icons['voice'] = {
 }
 
 UIConfig.layout = {
-    xAxisSpacing = 0,
-    layout = 'standard',
     iconBetweenSpacing = 2,
+    xAxisSpacing = 0,
     yAxisSpacing = 0,
+    layout = 'standard',
 }
 
 UIConfig.colors = {}
